@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reproductor de video de YouTube</title>
+  </head>
+  <body>
+    <input type="text" id="videoUrl" placeholder="Ingresa la URL del video de YouTube">
+    <button onclick="reproducirVideo()">Reproducir video</button>
+    <br>
+    <video id="videoPlayer" controls></video>
+    <br>
+    <p id="errorMessage"></p>
+    <script>
+      // Obtener la clave de API de YouTube
+      const API_KEY = "AIzaSyBffo_AouUsGjRJv6nzK9YTbHa1y81kXX4";
+
+      // Función para reproducir el video
+      function reproducirVideo() {
+        // Obtener la URL del video de YouTube ingresada por el usuario
+        const videoUrl = document.getElementById("videoUrl").value;
+
+        // Validar que se haya ingresado una URL válida
+        if (!videoUrl) {
+          // Mostrar mensaje de error si no se ha ingresado una URL
+          document.getElementById("errorMessage").innerText = "Por favor, ingresa una URL válida del video de YouTube";
+          return;
+        }
+
+        // Realizar una solicitud a la API de YouTube para obtener la URL del video
+        fetch(`https://www.googleapis.com/youtube/v3/videos?id=${videoUrl}&key=${API_KEY}&part=snippet`)
+          .then(response => response.json())
+          .then(data => {
+            // Verificar si se ha obtenido un resultado válido
+            if (data.items.length === 0) {
+              // Mostrar mensaje de error si el video no existe o no es accesible
+              document.getElementById("errorMessage").innerText = "El video no existe o no es accesible";
+              return;
+            }
+
+            // Obtener la URL del video
+            const videoUrl = `https://www.youtube.com/watch?v=${data.items[0].id}`;
+
+            // Establecer la URL del video como fuente del elemento <video>
+            document.getElementById("videoPlayer").src = videoUrl;
+          })
+          .catch(error => {
+            // Mostrar mensaje de error si ocurre un problema al obtener la URL del video
+            document.getElementById("errorMessage").innerText = "Ocurrió un problema al obtener la URL del video";
+          });
+      }
+    </script>
+  </body>
+</html>
